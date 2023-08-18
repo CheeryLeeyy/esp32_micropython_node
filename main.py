@@ -11,6 +11,7 @@ from sgp30 import SGP30
 from sht3x import SHT3x_Sensor
 from umqtt_simple import MQTTClient
 
+# 当前结点名称
 node_name = "node1"
 
 # MQTT 参数
