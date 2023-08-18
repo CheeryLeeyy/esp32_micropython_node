@@ -13,6 +13,7 @@ from umqtt_simple import MQTTClient
 
 node_name = "node1"
 print(111)
+print(333)
 
 # MQTT 参数
 mqtt_host = "192.168.1.20"
