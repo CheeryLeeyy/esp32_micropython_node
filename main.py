@@ -53,6 +53,33 @@ def do_connect(ssid, password, led=None):
     return connected
 
 
+# def sync_ntp(timer=None):
+#     """通过网络校准时间"""
+#     import ntptime
+#     ntptime.NTP_DELTA = 3155644800  # 可选 UTC+8偏移时间（秒），不设置就是UTC0
+#     ntptime.host = 'ntp1.aliyun.com'  # 可选，ntp服务器，默认是"pool.ntp.org" 这里使用阿里服务器
+#     try:
+#         ntptime.settime()
+#     except:
+#         pass
+
+def sync_ntp(timer=None):
+    import ntptime
+    from machine import RTC
+    rtc = RTC()
+    try:
+        ntptime.NTP_DELTA = 3155644800  # 可选 UTC+8偏移时间（秒），不设置就是UTC0
+        ntptime.host = 'ntp1.aliyun.com'  # 可选，ntp服务器，默认是"pool.ntp.org" 这里使用阿里服务器
+        ntptime.settime()  # 修改设备时间,到这就已经设置好了
+        localtime_now = time.time() + 8 * 3600
+        localtime_now = time.localtime(localtime_now)
+        rtc.datetime((localtime_now[0], localtime_now[1], localtime_now[2], localtime_now[6], localtime_now[3], localtime_now[4], localtime_now[5], localtime_now[7]))
+    except Exception as e:
+        print("同步ntp时间错误", repr(e))
+
+    print("localtime_now", time.localtime())
+
+
 # LED指示灯
 led = Pin(23, Pin.OUT)
 led.value(1)
@@ -61,23 +88,8 @@ wifi_info = do_connect(ssid="Yang_Home_2.4G", password="Liyang123", led=led)
 if not wifi_info:
     reset()
 
-
-def sync_ntp(timer=None):
-    """通过网络校准时间"""
-    import ntptime
-    ntptime.NTP_DELTA = 3155644800  # 可选 UTC+8偏移时间（秒），不设置就是UTC0
-    ntptime.host = 'ntp1.aliyun.com'  # 可选，ntp服务器，默认是"pool.ntp.org" 这里使用阿里服务器
-    try:
-        ntptime.settime()
-    except:
-        pass
-
-
-# 获取NTP时间
-# rtc = RTC()
+# 联网后同步网络时间 获取NTP时间
 sync_ntp()
-time_tuple = time.localtime()
-print(time_tuple)
 
 # 传感器初始化
 ### 数据字典
